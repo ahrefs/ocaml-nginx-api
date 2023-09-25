@@ -1,0 +1,163 @@
+type counts = (string * int) list <json repr="object">
+
+type datetime = string wrap <ocaml t="Timedesc.t" wrap="Timedesc.of_iso8601_exn" unwrap="Timedesc.to_iso8601_milli">
+
+type nginx = {
+  version : string;
+  build : string;
+  address : string;
+  generation : int;
+  load_timestamp : string;
+  timestamp : string;
+  pid : int;
+  ppid : int;
+}
+
+type error = {
+  status : int;
+  text : string;
+  code : string;
+}
+
+type error_obj = {
+  error : error;
+  request_id : string;
+  href : string;
+}
+
+type verify_failures = {
+    no_cert: int;
+    expired_cert: int;
+    revoked_cert: int;
+    other: int;
+  }
+
+type ssl = {
+  handshakes: int;
+  handshakes_failed : int;
+  session_reuses : int;
+  no_common_protocol : int;
+  no_common_cipher : int;
+  handshake_timeout : int;
+  peer_rejected_cert : int;
+  verify_failures : verify_failures;
+}
+
+type peer_state =
+[ Up <json name="up">
+| Draining <json name= "draining">
+| Down <json name= "down">
+| Unavail <json name= "unavail">
+| Checking <json name= "checking">
+| Unhealthy <json name= "unhealthy"> ]
+
+type sessions =
+{ _2xx <json name="2xx"> : int; _4xx <json name="4xx"> : int; _5xx <json name="5xx"> : int; total: int; }
+
+type responses =
+{ _1xx <json name="1xx">: int; _2xx <json name="2xx"> : int; _3xx <json name="3xx"> : int; _4xx <json name="4xx"> : int; _5xx <json name="5xx"> : int; codes: counts; total: int;
+}
+
+type health_checks = {
+  checks : int;
+  fails : int;
+  unhealthy : int;
+  ~last_passed <ocaml default="false"> : bool; (* TODO see why this is missing at times? *)
+}
+
+type peer = {
+  id : int;
+  server : string;
+(*  service: string; *)
+  name : string;
+  backup : bool;
+  weight: int;
+  state : peer_state;
+  active : int;
+(*
+  ssl: ssl;
+  max_conns: int;
+  *)
+  requests: int;
+  responses: responses;
+  sent: int;
+  received: int;
+  fails: int;
+  unavail: int;
+  health_checks : health_checks;
+  downtime : int;
+  (* downstart : string; (* make into datetime?  ISO8601 *) *)
+  (* selected : string; (* make into datetime *) *)
+  (* header_time : int; (* what units? *) *)
+  (* response_time : int; (* apparently not in this version? *) *)
+}
+
+type queue = {
+  size : int;
+  max_size : int;
+  overflows : int;
+  }
+
+type upstream = {
+  peers: peer list;
+  keepalive : int;
+  zombies : int;
+  zone : string;
+(*   queue : queue; *)
+  }
+
+type upstream_collection = (string * upstream) list <json repr="object">
+
+type upstream_server_new = {
+  server : string;
+  ?service : string option;
+  weight : int;
+  max_conns : int;
+  max_fails: int;
+  fail_timeout : string;
+  slow_start : string;
+  route : string;
+  backup : bool;
+  down : bool;
+  ?drain : bool option;
+  ?parent : string option;
+  ?host : string option;
+}
+
+type upstream_server = {
+  id : int;
+  server : string;
+  ?service : string option;
+  weight : int;
+  max_conns : int;
+  max_fails: int;
+  fail_timeout : string;
+  slow_start : string;
+  route : string;
+  backup : bool;
+  down : bool;
+  ?drain : bool option;
+  ?parent : string option;
+  ?host : string option;
+}
+
+type upstream_server_list = upstream_server list
+
+type upstream_server_collection = (string * upstream_server) list <json repr="object">
+
+type http_keyval_shared_memory_zone_get = (string * string) list <json repr="object">
+
+type http_keyval_shared_memory_zone_post = (string * abstract) list <json repr="object">
+
+type stream_server_zone = {
+  processing : int;
+  connections : int;
+  sessions : sessions;
+  discarded : int;
+  received : int;
+  sent : int;
+  ssl : ssl;
+}
+
+type endpoints = string list
+
