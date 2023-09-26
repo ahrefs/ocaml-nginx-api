@@ -1,4 +1,5 @@
 (library
+ (public_name nginx-http-api)
  (name nginx_http_api)
  (modules nginx nginx_t nginx_j)
  (libraries atdgen-runtime devkit lwt timedesc yojson)
