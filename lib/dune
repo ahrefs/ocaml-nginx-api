@@ -1,20 +1,9 @@
 (library
  (name nginx_http_api)
  (modules nginx nginx_t nginx_j)
- (libraries
-  atdgen-runtime
-  curl
-  devkit
-  devkit.core
-  extlib
-  extunix
-  lwt
-  lwt.unix
-  pcre
-  timedesc
-  yojson)
+ (libraries atdgen-runtime devkit lwt timedesc yojson)
  (preprocess
-  (pps lwt_ppx tyxml-ppx ppx_deriving.std ppx_fields_conv)))
+  (pps lwt_ppx)))
 
 (rule
  (targets nginx_t.mli nginx_t.ml)

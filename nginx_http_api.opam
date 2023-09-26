@@ -14,12 +14,10 @@ dev-repo: "git+https://github.com/brycenichols/nginx_http_api.git"
 depends: [ "ocaml"
            "dune"
            "ocamlfind"
+           "atdgen"
            "atdgen-runtime"
            "devkit"
-           "extlib"
-           "extunix"
            "lwt"
-           "pcre"
            "timedesc"
            "yojson" ]
 build: [
