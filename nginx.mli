@@ -44,6 +44,9 @@ module Upstream : sig
 
   val upstream_id : string -> upstream_id
 
+  (** Fetch a list of all upstreams configured (with names) *)
+  val list_with_names : nginx -> (upstream_id * t) list r
+
   (** Fetch a list of all upstreams configured *)
   val list : nginx -> t list r
 

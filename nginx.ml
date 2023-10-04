@@ -122,11 +122,16 @@ module Upstream = struct
   let list ng =
     do_api8_get_req ng [ "http"; "upstreams" ] (fun resp -> List.map snd (Nginx_j.upstream_collection_of_string resp))
 
+  (** Fetch a list of all upstreams configured (with names) *)
+  let list_with_names ng =
+    let to_upstream (nm, us) = (upstream_id nm, us) in
+    do_api8_get_req ng [ "http"; "upstreams" ] (fun resp -> List.map to_upstream (Nginx_j.upstream_collection_of_string resp))
+
   (* val get : nginx -> upstream_id -> t r *)
 
   (** Fetch state and configuration of the given upstream *)
   let get ng upstr_id =
-    do_api8_get_req ng [ "http"; "upstreams"; upstr_id ] (fun (str : string) -> Nginx_j.upstream_of_string str)
+    do_api8_get_req ng [ "http"; "upstreams"; upstr_id ] Nginx_j.upstream_of_string
 
   (* val reset : nginx -> upstream_id -> unit r *)
 
